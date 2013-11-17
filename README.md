@@ -22,35 +22,41 @@ RESIN requires CMake and SDL2 to build, and a supported platform toolchain.
 
 #### OS X ####
 
-With [homebrew](http://brew.sh) installed:
+With [homebrew](http://brew.sh) and Xcode 5 installed on Mavericks:
 
+```
   % brew install SDL2 cmake
   % cd $RESINDIR/xcode
   % ./configure.sh
   % open Resin.xcodeproj
+```
 
 #### Emscripten ####
 
+```
   % export EMSDK_PATH=/path/to/emscripten/1.5.x
   % cd $RESINDIR/emscripten/release
   % ./configure.sh
   % make
   % open ../sandbox.html
+```
 
 #### Android ####
 
 NB: Currently builds as a static library only
 
+```
   % cd $RESINDIR/android
   % ndk-build
+```
 
 #### Samples ####
 
 <img src="https://raw.github.com/safetydank/resinlib/master/docs/images/buffer_geometry.png">
 <img src="https://raw.github.com/safetydank/resinlib/master/docs/images/buffer_geometry_lines.png">
 
-* [Emscripten buffer geometry](http://resin.arp.io/buffer_geometry.html)
-* [Emscripten buffer geometry lines](http://resin.arp.io/buffer_geometry_lines.html)
+* [Emscripten-compiled buffer geometry example](http://resin.arp.io/buffer_geometry.html)
+* [Emscripten-compiled buffer geometry lines example](http://resin.arp.io/buffer_geometry_lines.html)
 
 ## Links ##
 

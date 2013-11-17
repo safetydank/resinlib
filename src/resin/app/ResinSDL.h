@@ -1,13 +1,17 @@
 #pragma once
 
-#include <SDL/SDL.h>
-
 #if defined(EMSCRIPTEN)
   //  Version 1.3.x
   #define RESIN_SDL1
 #else
   // Version 2.x
   #define RESIN_SDL2
+#endif
+
+#if defined( RESIN_SDL1 )
+  #include <SDL/SDL.h>
+#elif defined( RESIN_SDL2 )
+  #include <SDL.h>
 #endif
 
 #include "resin/app/Config.h"

@@ -9,7 +9,7 @@
   #include <SDL/SDL_compat.h> //  why???
 #elif defined(RESIN_SDL2)
   //  Desktop
-  #include <SDL/SDL_opengl.h>
+  #include <SDL_opengl.h>
   #include <OpenGL/gl.h>
 #endif
 

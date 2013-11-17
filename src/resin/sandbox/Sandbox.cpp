@@ -355,8 +355,8 @@ class SandboxApp : public App
         renderer = GLES2Renderer::create();
         renderer->setSize(width(), height());
 
-        test1();
-        // buffer_geometry_example();
+        // test1();
+        buffer_geometry_example();
         // buffer_geometry_lines_example();
     }
 
@@ -365,10 +365,10 @@ class SandboxApp : public App
         // printf("UPDATE\n");
         double time = elapsed();
 
-        // if (mesh) {
-        //     mesh->rotation().setX(time * 0.25);
-        //     mesh->rotation().setY(time * 0.5);
-        // }
+        if (mesh) {
+            mesh->rotation().setX(time * 0.25);
+            mesh->rotation().setY(time * 0.5);
+        }
 
         if (line) {
             line->rotation().setX(time * 0.25);

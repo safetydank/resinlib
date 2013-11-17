@@ -15,6 +15,8 @@ class Camera : public Object3D
     virtual ~Camera();
     void lookAt(const Vector3& v);
 
+    static CameraRef create();
+
     Property<Matrix4> matrixWorldInverse;
     Property<Matrix4> projectionMatrix;
     Property<Matrix4> projectionMatrixInverse;

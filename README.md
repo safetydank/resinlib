@@ -54,9 +54,11 @@ NB: Currently builds as a static library only
 
 <img src="https://raw.github.com/safetydank/resinlib/master/docs/images/buffer_geometry.png">
 <img src="https://raw.github.com/safetydank/resinlib/master/docs/images/buffer_geometry_lines.png">
+<img src="https://raw.github.com/safetydank/resinlib/master/docs/images/shader.png">
 
 * [Emscripten-compiled buffer geometry example](http://resin.arp.io/buffer_geometry.html)
 * [Emscripten-compiled buffer geometry lines example](http://resin.arp.io/buffer_geometry_lines.html)
+* [Emscripten-compiled shader example](http://resin.arp.io/shader.html)
 
 ## Links ##
 

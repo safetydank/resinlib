@@ -4,6 +4,11 @@
 
 namespace RESIN {
 
+CameraRef Camera::create()
+{
+    return CameraRef(new Camera());
+}
+
 Camera::Camera() : Object3D(kCamera)
 {
 }

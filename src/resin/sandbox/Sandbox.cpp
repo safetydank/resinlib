@@ -50,6 +50,46 @@ const char* fragment_src2 =
    }                                             \n\
 ";
 
+
+const char* shader_vert =
+"void main()    {\n"
+"\n"
+"    gl_Position = vec4( position, 1.0 );\n"
+"\n"
+"}\n";
+
+const char* shader_frag =
+"uniform vec2 resolution;\n"
+"uniform float time;\n"
+"\n"
+"void main()    {\n"
+"\n"
+"    vec2 p = -1.0 + 2.0 * gl_FragCoord.xy / resolution.xy;\n"
+"    float a = time*40.0;\n"
+"    float d,e,f,g=1.0/40.0,h,i,r,q;\n"
+"    e=400.0*(p.x*0.5+0.5);\n"
+"    f=400.0*(p.y*0.5+0.5);\n"
+"    i=200.0+sin(e*g+a/150.0)*20.0;\n"
+"    d=200.0+cos(f*g/2.0)*18.0+cos(e*g)*7.0;\n"
+"    r=sqrt(pow(i-e,2.0)+pow(d-f,2.0));\n"
+"    q=f/r;\n"
+"    e=(r*cos(q))-a/2.0;f=(r*sin(q))-a/2.0;\n"
+"    d=sin(e*g)*176.0+sin(e*g)*164.0+r;\n"
+"    h=((f+d)+a/2.0)*g;\n"
+"    i=cos(h+r*p.x/1.3)*(e+e+a)+cos(q*g*6.0)*(r+h/3.0);\n"
+"    h=sin(f*g)*144.0-sin(e*g)*212.0*p.x;\n"
+"    h=(h+(f-e)*q+sin(r-(a+h)/7.0)*10.0+i/4.0)*g;\n"
+"    i+=cos(h*2.3*sin(a/350.0-q))*184.0*sin(q-(r*4.3+a/12.0)*g)+tan(r*g+h)*184.0*cos(r*g+h);\n"
+"    i=mod(i/5.6,256.0)/64.0;\n"
+"    if(i<0.0) i+=4.0;\n"
+"    if(i>=2.0) i=4.0-i;\n"
+"    d=r/350.0;\n"
+"    d+=sin(d*d*8.0)*0.52;\n"
+"    f=(sin(a*g)+1.0)/2.0;\n"
+"    gl_FragColor=vec4(vec3(f*i/1.6,i/2.0+d/13.0,i)*d*p.x+vec3(i/1.3+d/8.0,i/2.0+d/18.0,i)*d*(1.0-p.x),1.0);\n"
+"\n"
+"}\n";
+
 class SandboxApp : public App
 {
   protected:
@@ -58,6 +98,9 @@ class SandboxApp : public App
     GLES2RendererRef renderer;
     MeshRef mesh;
     LineRef line;
+    MaterialRef material;
+
+    MaterialRef shaderMaterial;
     
   public:
     SandboxApp() : App()
@@ -121,7 +164,7 @@ class SandboxApp : public App
 
         //  Default winding is FRONT_FACE CCW
         uint16_t* indexes = geometry->attribute("index")->dataPtr<uint16_t>();
-        indexes[0] = 2; indexes[3] = 3;		
+        indexes[0] = 2; indexes[3] = 3;     
         indexes[1] = 1; indexes[4] = 2;
         indexes[2] = 0; indexes[5] = 0;
 
@@ -350,14 +393,58 @@ class SandboxApp : public App
         renderer->physicallyBasedShading = true;
     }
 
+    void shader_example()
+    {
+        camera = Camera::create();
+        camera->position().z() = 1;
+        camera->lookAt(Vector3(0, 0, 0));
+
+        scene = Scene::create();
+
+        shaderMaterial = ShaderMaterial::create();
+        shaderMaterial -> vertexShader(shader_vert)
+                         .fragmentShader(shader_frag);
+
+        shaderMaterial->uniforms = {
+            { "time", newUniform<'f'>(1.0f) },
+            { "resolution", newUniform<'v2'>(Vector2(width(), height())) }
+        };
+
+        auto geometry = BufferGeometry::create();
+        geometry->attributes = {
+            { "position", newAttribute<'v3'>(4) },
+            { "index",    newAttribute<uint16_t>(6, 1) },
+        };
+
+        geometry->offsets() = {
+            { newOffset(0, 0, 6) }
+        };
+
+        Vector3* positions = geometry->attribute("position")->dataPtr<Vector3>();
+        positions[0] = Vector3(-1.0f, -1.0f, 0);
+        positions[1] = Vector3(-1.0f,  1.0f, 0);
+        positions[2] = Vector3( 1.0f,  1.0f, 0);
+        positions[3] = Vector3( 1.0f, -1.0f, 0);
+
+        //  Default winding is FRONT_FACE CCW
+        uint16_t* indexes = geometry->attribute("index")->dataPtr<uint16_t>();
+        indexes[0] = 2; indexes[3] = 3;     
+        indexes[1] = 1; indexes[4] = 2;
+        indexes[2] = 0; indexes[5] = 0;
+
+        auto shaderMesh = Mesh::create( geometry, shaderMaterial );
+        scene->add( shaderMesh );
+    }
+
     void setup()
     {
         renderer = GLES2Renderer::create();
         renderer->setSize(width(), height());
 
         // test1();
-        buffer_geometry_example();
+        // buffer_geometry_example();
         // buffer_geometry_lines_example();
+        shader_example();
     }
 
     void update()
@@ -373,6 +460,18 @@ class SandboxApp : public App
         if (line) {
             line->rotation().setX(time * 0.25);
             line->rotation().setY(time * 0.5);
+        }
+
+        if (material) {
+            auto fillColor = material->uniform("fillColor");
+            fillColor->value<Color>().setRGB(0.2f, 0.8f, 0.2f);
+        }
+
+        if (shaderMaterial) {
+            // auto fillColor = material->uniform("fillColor");
+            shaderMaterial
+                ->uniform("time")
+                ->value<float>() = elapsed() * 3.0f;
         }
     }
 

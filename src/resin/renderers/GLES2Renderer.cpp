@@ -8,6 +8,7 @@
 #include "resin/materials/LineBasicMaterial.h"
 #include "resin/materials/Material.h"
 #include "resin/materials/MeshPhongMaterial.h"
+#include "resin/materials/ParticleBasicMaterial.h"
 #include "resin/math/Math.h"
 #include "resin/objects/Line.h"
 #include "resin/renderers/GLES2Renderer.h"
@@ -1311,6 +1312,17 @@ void refreshUniformsLights ( UniformMap& uniforms, RendererLights& lights )
 
 }
 
+void GLES2Renderer::refreshUniformsParticle ( UniformMap& uniforms, ParticleBasicMaterialRef material )
+{
+    uniforms["psColor"]->value<Color>() = material->color();
+    uniforms["opacity"]->value<float>() = material->opacity();
+    uniforms["size"]->value<float>() = material->size();
+    // XXX was _canvas.height
+    uniforms["scale"]->value<float>() = _height / 2.0; // TODO: Cache this.
+
+    uniforms["map"]->ref<Texture>() = material->map();
+}
+
 struct LightAlloc {
     int directional;
     int point;
@@ -1478,7 +1490,12 @@ ProgramRef GLES2Renderer::setProgram( CameraRef camera, vector<LightRef>& lights
 
             refreshUniformsPhong( m_uniforms, static_pointer_cast<MeshPhongMaterial>(material) );
 
+        } else if ( material->tag() == kParticleBasicMaterial ) {
+
+            refreshUniformsParticle( m_uniforms, static_pointer_cast<ParticleBasicMaterial>(material) );
+
         }
+
 //
 //         if ( material instanceof THREE.LineBasicMaterial ) {
 //

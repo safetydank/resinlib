@@ -125,6 +125,7 @@ class Object3D : public std::enable_shared_from_this<Object3D>
     /* Properties */
     Property<bool> visible;
     Property<bool> frustumCulled;
+    Property<bool> sortParticles;
 
   public:
     /*  Renderer interface  */

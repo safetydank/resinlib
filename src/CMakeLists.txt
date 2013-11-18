@@ -40,6 +40,7 @@ set(SOURCES_CXX
     resin/materials/Material.cpp
     resin/materials/MeshBasicMaterial.cpp
     resin/materials/MeshPhongMaterial.cpp
+    resin/materials/ParticleBasicMaterial.cpp
     resin/materials/ShaderMaterial.cpp
     resin/math/Box3.cpp
     resin/math/Color.cpp
@@ -59,6 +60,7 @@ set(SOURCES_CXX
     resin/math/Vector4.cpp
     resin/objects/Line.cpp
     resin/objects/Mesh.cpp
+    resin/objects/ParticleSystem.cpp
     resin/renderers/GLES2Renderer.cpp
     resin/renderers/Program.cpp
     resin/sandbox/Sandbox.cpp

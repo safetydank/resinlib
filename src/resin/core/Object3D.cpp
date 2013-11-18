@@ -55,6 +55,7 @@ Object3D::Object3D(Object3D_t tag) : tag(tag)
     mReceiveShadow = false;
 
     frustumCulled() = true;
+    sortParticles() = false;
 
     mUserData = NULL;
 

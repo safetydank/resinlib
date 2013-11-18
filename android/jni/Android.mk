@@ -26,6 +26,7 @@ LOCAL_SRC_FILES := \
     src/resin/materials/Material.cpp \
     src/resin/materials/MeshBasicMaterial.cpp \
     src/resin/materials/MeshPhongMaterial.cpp \
+    src/resin/materials/ParticleBasicMaterial.cpp \
     src/resin/materials/ShaderMaterial.cpp \
 	src/resin/math/Box3.cpp \
 	src/resin/math/Color.cpp \
@@ -45,6 +46,7 @@ LOCAL_SRC_FILES := \
     src/resin/math/Vector4.cpp \
     src/resin/objects/Line.cpp \
     src/resin/objects/Mesh.cpp \
+    src/resin/objects/ParticleSystem.cpp \
     src/resin/renderers/GLES2Renderer.cpp \
     src/resin/renderers/Program.cpp \
 	src/resin/scenes/Fog.cpp \

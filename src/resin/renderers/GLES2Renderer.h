@@ -18,6 +18,7 @@ class Scene;
 typedef std::shared_ptr<class Fog> FogRef;
 typedef std::shared_ptr<class LineBasicMaterial> LineBasicMaterialRef;
 typedef std::shared_ptr<class MeshPhongMaterial> MeshPhongMaterialRef;
+typedef std::shared_ptr<class ParticleBasicMaterial> ParticleBasicMaterialRef;
 
 struct RendererLights {
 
@@ -156,6 +157,7 @@ class GLES2Renderer
     void refreshUniformsCommon ( UniformMap& uniforms, MaterialRef material );
     void refreshUniformsPhong ( UniformMap& uniforms, MeshPhongMaterialRef material );
     void refreshUniformsLine ( UniformMap& uniforms, LineBasicMaterialRef material );
+    void refreshUniformsParticle ( UniformMap& uniforms, ParticleBasicMaterialRef material );
     void setDefaultGLState();
     void loadUniformsGeneric ( Program& program, UniformMap& uniforms );
     void setBlending( int32_t blending, int32_t blendEquation=-1, int32_t blendSrc=-1, int32_t blendDst=-1 );

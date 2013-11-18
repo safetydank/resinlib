@@ -2307,8 +2307,9 @@ void GLES2Renderer::renderObjects ( vector<Scene::GLES2Object> renderList, bool 
 
                 if ( ! material ) continue;
 
-                // if ( useBlending ) setBlending( material->blending(),
-                //         material->blendEquation(), material->blendSrc(), material->blendDst() );
+                if ( useBlending )
+                    setBlending( material->blending(), material->blendEquation(),
+                            material->blendSrc(), material->blendDst() );
 
                 setDepthTest( material->depthTest() );
                 setDepthWrite( material->depthWrite() );
@@ -2669,7 +2670,7 @@ void GLES2Renderer::render(SceneRef scene, CameraRef camera, bool forceClear)
 
         // opaque pass (front-to-back order)
 
-        // setBlending( THREE.NoBlending );
+        setBlending( kNoBlending );
 
         renderObjects( scene->__gles2Objects, true, kOpaque, camera, lights, fog, false, MaterialRef() );
         // renderObjectsImmediate( scene->__webglObjectsImmediate, "opaque", camera, lights, fog, false, material );
@@ -2889,78 +2890,79 @@ void GLES2Renderer::setPolygonOffset ( bool polygonoffset, float factor, float u
 
 };
 
-// this.setBlending = function ( blending, blendEquation, blendSrc, blendDst ) {
-//
-//     if ( blending !== _oldBlending ) {
-//
-//         if ( blending === THREE.NoBlending ) {
-//
-//             _gl.disable( _gl.BLEND );
-//
-//         } else if ( blending === THREE.AdditiveBlending ) {
-//
-//             _gl.enable( _gl.BLEND );
-//             _gl.blendEquation( _gl.FUNC_ADD );
-//             _gl.blendFunc( _gl.SRC_ALPHA, _gl.ONE );
-//
-//         } else if ( blending === THREE.SubtractiveBlending ) {
-//
-//             // TODO: Find blendFuncSeparate() combination
-//             _gl.enable( _gl.BLEND );
-//             _gl.blendEquation( _gl.FUNC_ADD );
-//             _gl.blendFunc( _gl.ZERO, _gl.ONE_MINUS_SRC_COLOR );
-//
-//         } else if ( blending === THREE.MultiplyBlending ) {
-//
-//             // TODO: Find blendFuncSeparate() combination
-//             _gl.enable( _gl.BLEND );
-//             _gl.blendEquation( _gl.FUNC_ADD );
-//             _gl.blendFunc( _gl.ZERO, _gl.SRC_COLOR );
-//
-//         } else if ( blending === THREE.CustomBlending ) {
-//
-//             _gl.enable( _gl.BLEND );
-//
-//         } else {
-//
-//             _gl.enable( _gl.BLEND );
-//             _gl.blendEquationSeparate( _gl.FUNC_ADD, _gl.FUNC_ADD );
-//             _gl.blendFuncSeparate( _gl.SRC_ALPHA, _gl.ONE_MINUS_SRC_ALPHA, _gl.ONE, _gl.ONE_MINUS_SRC_ALPHA );
-//
-//         }
-//
-//         _oldBlending = blending;
-//
-//     }
-//
-//     if ( blending === THREE.CustomBlending ) {
-//
-//         if ( blendEquation !== _oldBlendEquation ) {
-//
-//             _gl.blendEquation( paramThreeToGL( blendEquation ) );
-//
-//             _oldBlendEquation = blendEquation;
-//
-//         }
-//
-//         if ( blendSrc !== _oldBlendSrc || blendDst !== _oldBlendDst ) {
-//
-//             _gl.blendFunc( paramThreeToGL( blendSrc ), paramThreeToGL( blendDst ) );
-//
-//             _oldBlendSrc = blendSrc;
-//             _oldBlendDst = blendDst;
-//
-//         }
-//
-//     } else {
-//
-//         _oldBlendEquation = null;
-//         _oldBlendSrc = null;
-//         _oldBlendDst = null;
-//
-//     }
-//
-// };
+void GLES2Renderer::setBlending( int32_t blending, int32_t blendEquation, int32_t blendSrc, int32_t blendDst )
+{
+
+    if ( blending != _oldBlending ) {
+
+        if ( blending == kNoBlending ) {
+
+            glDisable( GL_BLEND );
+
+        } else if ( blending == kAdditiveBlending ) {
+
+            glEnable( GL_BLEND );
+            glBlendEquation( GL_FUNC_ADD );
+            glBlendFunc( GL_SRC_ALPHA, GL_ONE );
+
+        } else if ( blending == kSubtractiveBlending ) {
+
+            // TODO: Find blendFuncSeparate() combination
+            glEnable( GL_BLEND );
+            glBlendEquation( GL_FUNC_ADD );
+            glBlendFunc( GL_ZERO, GL_ONE_MINUS_SRC_COLOR );
+
+        } else if ( blending == kMultiplyBlending ) {
+
+            // TODO: Find blendFuncSeparate() combination
+            glEnable( GL_BLEND );
+            glBlendEquation( GL_FUNC_ADD );
+            glBlendFunc( GL_ZERO, GL_SRC_COLOR );
+
+        } else if ( blending == kCustomBlending ) {
+
+            glEnable( GL_BLEND );
+
+        } else {
+
+            glEnable( GL_BLEND );
+            glBlendEquationSeparate( GL_FUNC_ADD, GL_FUNC_ADD );
+            glBlendFuncSeparate( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA );
+
+        }
+
+        _oldBlending = blending;
+
+    }
+
+    if ( blending == kCustomBlending ) {
+
+        if ( blendEquation != _oldBlendEquation ) {
+
+            glBlendEquation( paramThreeToGL( blendEquation ) );
+
+            _oldBlendEquation = blendEquation;
+
+        }
+
+        if ( blendSrc != _oldBlendSrc || blendDst != _oldBlendDst ) {
+
+            glBlendFunc( paramThreeToGL( blendSrc ), paramThreeToGL( blendDst ) );
+
+            _oldBlendSrc = blendSrc;
+            _oldBlendDst = blendDst;
+
+        }
+
+    } else {
+
+        _oldBlendEquation = -1;
+        _oldBlendSrc = -1;
+        _oldBlendDst = -1;
+
+    }
+
+}
 
 bool isPowerOfTwo ( int value ) {
 

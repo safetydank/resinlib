@@ -158,6 +158,7 @@ class GLES2Renderer
     void refreshUniformsLine ( UniformMap& uniforms, LineBasicMaterialRef material );
     void setDefaultGLState();
     void loadUniformsGeneric ( Program& program, UniformMap& uniforms );
+    void setBlending( int32_t blending, int32_t blendEquation=-1, int32_t blendSrc=-1, int32_t blendDst=-1 );
     GLuint getTextureUnit();
 
   public:
@@ -283,7 +284,7 @@ class GLES2Renderer
 	GLint _oldDoubleSided;
 	GLint _oldFlipSided;
 
-	GLint _oldBlending;
+	int32_t _oldBlending;
 
 	GLint _oldBlendEquation;
 	GLint _oldBlendSrc;

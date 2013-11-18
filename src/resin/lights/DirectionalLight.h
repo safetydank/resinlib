@@ -17,7 +17,7 @@ class DirectionalLight : public Light
 
 	// Property<float> intensity;
 
-	Property<bool> castShadow;
+	// Property<bool> castShadow;
 	// Property<bool> onlyShadow;
 
 	Property<float> shadowCameraNear;

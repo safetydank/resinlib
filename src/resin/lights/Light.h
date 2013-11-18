@@ -25,6 +25,8 @@ class Light : public Object3D
     Property<Light_t> type;
 	Property<float> intensity;
 	Property<float> distance;
+
+	Property<bool> castShadow;
 	Property<bool> onlyShadow;
 
   protected:

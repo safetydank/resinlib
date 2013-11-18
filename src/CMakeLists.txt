@@ -35,6 +35,7 @@ set(SOURCES_CXX
     resin/lights/HemisphereLight.cpp
     resin/lights/Light.cpp
     resin/lights/PointLight.cpp
+    resin/lights/SpotLight.cpp
     resin/materials/LineBasicMaterial.cpp
     resin/materials/Material.cpp
     resin/materials/MeshBasicMaterial.cpp
@@ -84,6 +85,7 @@ set(HEADERS_CXX
     resin/lights/HemisphereLight.h
     resin/lights/Light.h 
     resin/lights/PointLight.h
+    resin/lights/SpotLight.h
     resin/materials/LineBasicMaterial.h
     resin/materials/Material.h
     resin/materials/MeshBasicMaterial.h

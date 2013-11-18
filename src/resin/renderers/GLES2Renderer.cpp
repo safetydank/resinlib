@@ -2,8 +2,9 @@
 #include "resin/cameras/Camera.h"
 #include "resin/core/BufferGeometry.h"
 #include "resin/core/Image.h"
-#include "resin/lights/Light.h"
 #include "resin/lights/HemisphereLight.h"
+#include "resin/lights/Light.h"
+#include "resin/lights/SpotLight.h"
 #include "resin/materials/LineBasicMaterial.h"
 #include "resin/materials/Material.h"
 #include "resin/materials/MeshPhongMaterial.h"
@@ -377,13 +378,13 @@ void GLES2Renderer::setupLights ( ProgramRef program, vector<LightRef>& lights )
     auto& pointPositions = zlights.point.positions;
     auto& pointDistances = zlights.point.distances;
 
-//    spotColors = zlights.spot.colors,
-//    spotPositions = zlights.spot.positions,
-//    spotDistances = zlights.spot.distances,
-//    spotDirections = zlights.spot.directions,
-//    spotAnglesCos = zlights.spot.anglesCos,
-//    spotExponents = zlights.spot.exponents,
-//
+    auto& spotColors = zlights.spot.colors;
+    auto& spotPositions = zlights.spot.positions;
+    auto& spotDistances = zlights.spot.distances;
+    auto& spotDirections = zlights.spot.directions;
+    auto& spotAnglesCos = zlights.spot.anglesCos;
+    auto& spotExponents = zlights.spot.exponents;
+
     auto& hemiSkyColors = zlights.hemi.skyColors;
     auto& hemiGroundColors = zlights.hemi.groundColors;
     auto& hemiPositions = zlights.hemi.positions;
@@ -398,17 +399,19 @@ void GLES2Renderer::setupLights ( ProgramRef program, vector<LightRef>& lights )
     uint32_t spotCount = 0;
     uint32_t hemiCount = 0;
 
-    // float dirOffset = 0;
-    // float pointOffset = 0;
-    // float spotOffset = 0;
-    // float hemiOffset = 0;
-
     dirPositions.clear();
     dirColors.clear();
 
     pointPositions.clear();
     pointColors.clear();
     pointDistances.clear();
+
+    spotColors.clear();
+    spotPositions.clear();
+    spotDistances.clear();
+    spotDirections.clear();
+    spotAnglesCos.clear();
+    spotExponents.clear();
 
     hemiPositions.clear();
     hemiSkyColors.clear();
@@ -501,45 +504,45 @@ void GLES2Renderer::setupLights ( ProgramRef program, vector<LightRef>& lights )
             pointLength += 1;
 
         } else if ( light->type() == kSpot ) {
-            //
-            //            spotCount += 1;
-            //
-            //            if ( ! light.visible ) continue;
-            //
-            //            spotOffset = spotLength * 3;
-            //
-            //            if ( _this.gammaInput ) {
-            //
-            //                setColorGamma( spotColors, spotOffset, color, intensity * intensity );
-            //
-            //            } else {
-            //
-            //                setColorLinear( spotColors, spotOffset, color, intensity );
-            //
-            //            }
-            //
-            //            _vector3.getPositionFromMatrix( light.matrixWorld );
-            //
-            //            spotPositions[ spotOffset ]     = _vector3.x;
-            //            spotPositions[ spotOffset + 1 ] = _vector3.y;
-            //            spotPositions[ spotOffset + 2 ] = _vector3.z;
-            //
-            //            spotDistances[ spotLength ] = distance;
-            //
-            //            _direction.copy( _vector3 );
-            //            _vector3.getPositionFromMatrix( light.target.matrixWorld );
-            //            _direction.sub( _vector3 );
-            //            _direction.normalize();
-            //
-            //            spotDirections[ spotOffset ]     = _direction.x;
-            //            spotDirections[ spotOffset + 1 ] = _direction.y;
-            //            spotDirections[ spotOffset + 2 ] = _direction.z;
-            //
-            //            spotAnglesCos[ spotLength ] = Math.cos( light.angle );
-            //            spotExponents[ spotLength ] = light.exponent;
-            //
-            //            spotLength += 1;
-            //
+
+            SpotLightRef spotlight = static_pointer_cast<SpotLight>(light);
+
+            spotCount += 1;
+
+            if ( ! spotlight->visible() ) continue;
+
+            Color spotColor;
+
+            if ( gammaInput ) {
+
+                setColorGamma( &spotColor, color, intensity * intensity );
+
+            } else {
+
+                setColorLinear( &spotColor, color, intensity );
+
+            }
+
+            spotColors.push_back( spotColor );
+
+            _vector3.getPositionFromMatrix( spotlight->matrixWorld() );
+
+            spotPositions.push_back( _vector3 );
+
+            spotDistances.push_back( distance );
+
+            _direction.copy( _vector3 );
+            _vector3.getPositionFromMatrix( spotlight->target()->matrixWorld() );
+            _direction.sub( _vector3 );
+            _direction.normalize();
+
+            spotDirections.push_back( _direction );
+
+            spotAnglesCos.push_back( cos( spotlight->angle() ) );
+            spotExponents.push_back( spotlight->exponent() );
+
+            spotLength += 1;
+
         } else if ( light->type() == kHemisphere ) {
 
             hemiCount += 1;
@@ -593,7 +596,8 @@ void GLES2Renderer::setupLights ( ProgramRef program, vector<LightRef>& lights )
         dirColors[ l ] = Color(0);
     for ( int l = pointLength, ll = Math::max( uint32_t(pointColors.size()), pointCount ); l < ll; l ++ )
         pointColors[ l ] = Color(0);
-//    for ( l = spotLength * 3, ll = Math.max( spotColors.length, spotCount * 3 ); l < ll; l ++ ) spotColors[ l ] = 0.0;
+    for ( int l = spotLength, ll = Math::max( uint32_t(spotColors.size()), spotCount ); l < ll; l ++ )
+        spotColors[ l ] = 0.0;
     for ( int l = hemiLength, ll = Math::max( uint32_t(hemiSkyColors.size()), hemiCount ); l < ll; l ++ )
         hemiSkyColors[ l ] = Color(0);
     for ( int l = hemiLength, ll = Math::max( uint32_t(hemiGroundColors.size()), hemiCount ); l < ll; l ++ )
@@ -601,7 +605,7 @@ void GLES2Renderer::setupLights ( ProgramRef program, vector<LightRef>& lights )
 
     zlights.directional.length = dirLength;
     zlights.point.length = pointLength;
-//    zlights.spot.length = spotLength;
+    zlights.spot.length = spotLength;
     zlights.hemi.length = hemiLength;
 
     zlights.ambient[0] = r;
@@ -1294,12 +1298,12 @@ void refreshUniformsLights ( UniformMap& uniforms, RendererLights& lights )
     uniforms["pointLightPosition"]->array<Vector3>() = lights.point.positions;
     uniforms["pointLightDistance"]->array<float>() = lights.point.distances;
 
-    // uniforms.spotLightColor.value = lights.spot.colors;
-    // uniforms.spotLightPosition.value = lights.spot.positions;
-    // uniforms.spotLightDistance.value = lights.spot.distances;
-    // uniforms.spotLightDirection.value = lights.spot.directions;
-    // uniforms.spotLightAngleCos.value = lights.spot.anglesCos;
-    // uniforms.spotLightExponent.value = lights.spot.exponents;
+    uniforms["spotLightColor"]->array<Color>() = lights.spot.colors;
+    uniforms["spotLightPosition"]->array<Vector3>() = lights.spot.positions;
+    uniforms["spotLightDistance"]->array<float>() = lights.spot.distances;
+    uniforms["spotLightDirection"]->array<Vector3>() = lights.spot.directions;
+    uniforms["spotLightAngleCos"]->array<float>() = lights.spot.anglesCos;
+    uniforms["spotLightExponent"]->array<float>() = lights.spot.exponents;
 
     uniforms["hemisphereLightSkyColor"]->array<Color>() = lights.hemi.skyColors;
     uniforms["hemisphereLightGroundColor"]->array<Color>() = lights.hemi.groundColors;

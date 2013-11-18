@@ -21,6 +21,7 @@ LOCAL_SRC_FILES := \
     src/resin/lights/HemisphereLight.cpp \
     src/resin/lights/Light.cpp \
     src/resin/lights/PointLight.cpp \
+    src/resin/lights/SpotLight.cpp \
     src/resin/materials/LineBasicMaterial.cpp \
     src/resin/materials/Material.cpp \
     src/resin/materials/MeshBasicMaterial.cpp \

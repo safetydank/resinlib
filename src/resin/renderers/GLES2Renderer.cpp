@@ -3128,6 +3128,11 @@ void GLES2Renderer::setDefaultGLState ()
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
     glClearColor( _clearColor.r, _clearColor.g, _clearColor.b, _clearAlpha );
+
+#if defined( RESIN_GL )
+    glEnable(GL_POINT_SPRITE);
+    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+#endif
 }
 
 

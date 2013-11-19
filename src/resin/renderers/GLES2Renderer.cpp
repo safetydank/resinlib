@@ -197,18 +197,12 @@ void addObject( Object3DRef object, SceneRef scene )
         if (geometry) {
             initDirectBuffers(geometry);
         }
-        else if (object->tag() == kLine) {
-            //  Create line BufferGeometry
-        }
-        else if (object->tag() == kParticleSystem) {
-            //  Create particle system BufferGeometry
-        }
 
         if (!object->__webglActive) {
             if (object->tag() == kMesh) {
                 addBuffer(scene->__gles2Objects, geometry, object);
             }
-            else if (object->tag() == kLine) {
+            else if (object->tag() == kLine || object->tag() == kParticleSystem) {
                 addBuffer(scene->__gles2Objects, geometry, object);
             }
             // XXX add handlers for other object types
@@ -812,25 +806,26 @@ void GLES2Renderer::renderBufferDirect( CameraRef camera, vector<LightRef>& ligh
 
     // render particles
 
-    }/* else if ( object instanceof THREE.ParticleSystem ) {
+    } else if ( object->tag() == kParticleSystem ) {
 
         if ( updateBuffers ) {
 
-            for ( attributeName in programAttributes ) {
+            for ( auto& kv : program->attributes ) {
 
-                attributePointer = programAttributes[ attributeName ];
-                attributeItem = geometryAttributes[ attributeName ];
+                const string& attributeName = kv.first;
+                GLint attributePointer = kv.second;
+                AttributeRef attributeItem = geometry->attribute( attributeName );
 
                 if ( attributePointer >= 0 ) {
 
                     if ( attributeItem ) {
 
-                        attributeSize = attributeItem.itemSize;
-                        _gl.bindBuffer( _gl.ARRAY_BUFFER, attributeItem.buffer );
+                        int attributeSize = attributeItem->itemSize;
+                        glBindBuffer( GL_ARRAY_BUFFER, attributeItem->buffer() );
                         enableAttribute( attributePointer );
-                        _gl.vertexAttribPointer( attributePointer, attributeSize, _gl.FLOAT, false, 0, 0 );
+                        glVertexAttribPointer( attributePointer, attributeSize, GL_FLOAT, false, 0, 0 );
 
-                    } else if ( material->defaultAttributeValues && material->defaultAttributeValues[ attributeName ] ) {
+                    }/* else if ( material->defaultAttributeValues && material->defaultAttributeValues[ attributeName ] ) {
 
                         if ( material->defaultAttributeValues[ attributeName ].length === 2 ) {
 
@@ -842,24 +837,28 @@ void GLES2Renderer::renderBufferDirect( CameraRef camera, vector<LightRef>& ligh
 
                         }
 
-                    }
+                    } */
 
                 }
 
             }
 
-            var position = geometryAttributes[ "position" ];
-
-            // render particles
-
-            _gl.drawArrays( _gl.POINTS, 0, position.numItems / 3 );
-
-            _this.info.render.calls ++;
-            _this.info.render.points += position.numItems / 3;
-
         }
 
-    } */ else if ( object->tag() == kLine ) {
+        // render particles
+
+        AttributeRef position = geometry->attribute( "position" );
+
+        if ( position ) {
+            int count = position->dataSize<Vector3>();
+            glDrawArrays( GL_POINTS, 0, count );
+
+            info.render.calls ++;
+            info.render.points += count;
+        }
+
+
+    } else if ( object->tag() == kLine ) {
         LineRef line = static_pointer_cast<Line>(object);
 
         if ( updateBuffers ) {
@@ -867,9 +866,8 @@ void GLES2Renderer::renderBufferDirect( CameraRef camera, vector<LightRef>& ligh
             // for ( attributeName in programAttributes ) {
             for ( auto& kv : program->attributes ) {
 
-                GLint attributePointer = kv.second;
-
                 const string& attributeName = kv.first;
+                GLint attributePointer = kv.second;
                 AttributeRef attributeItem = geometry->attribute( attributeName );
 
                 if ( attributePointer >= 0 ) {
@@ -1316,6 +1314,7 @@ void GLES2Renderer::refreshUniformsParticle ( UniformMap& uniforms, ParticleBasi
 {
     uniforms["psColor"]->value<Color>() = material->color();
     uniforms["opacity"]->value<float>() = material->opacity();
+    float psize = material->size();
     uniforms["size"]->value<float>() = material->size();
     // XXX was _canvas.height
     uniforms["scale"]->value<float>() = _height / 2.0; // TODO: Cache this.

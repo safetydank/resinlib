@@ -2,6 +2,9 @@
 
 namespace RESIN {
 
+//  Generated code
+#include "resin/renderers/shaders/ParticleBasicMaterial-shader.cpp"
+
 ParticleBasicMaterialRef ParticleBasicMaterial::create()
 {
     return ParticleBasicMaterialRef(new ParticleBasicMaterial());
@@ -9,6 +12,11 @@ ParticleBasicMaterialRef ParticleBasicMaterial::create()
 
 ParticleBasicMaterial::ParticleBasicMaterial() : Material(kParticleBasicMaterial)
 {
+    //  equivalent to three.js setMaterialShaders
+    initUniforms(uniforms);
+    vertexShader(ParticleBasicMaterial::kVertexShader);
+    fragmentShader(ParticleBasicMaterial::kFragmentShader);
+
 	color() = Color( 0xffffff );
 
 	// map = null;

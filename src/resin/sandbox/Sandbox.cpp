@@ -13,6 +13,7 @@
 #include "resin/materials/LineBasicMaterial.h"
 #include "resin/materials/MeshBasicMaterial.h"
 #include "resin/materials/MeshPhongMaterial.h"
+#include "resin/materials/ParticleBasicMaterial.h"
 #include "resin/materials/ShaderMaterial.h"
 #include "resin/materials/Uniform.h"
 #include "resin/math/Math.h"
@@ -20,6 +21,7 @@
 #include "resin/math/Matrix4.h"
 #include "resin/objects/Line.h"
 #include "resin/objects/Mesh.h"
+#include "resin/objects/ParticleSystem.h"
 #include "resin/renderers/GLES2Renderer.h"
 #include "resin/scenes/Scene.h"
 
@@ -101,6 +103,8 @@ class SandboxApp : public App
     MaterialRef material;
 
     MaterialRef shaderMaterial;
+
+    ParticleSystemRef particleSystem;
     
   public:
     SandboxApp() : App()
@@ -436,15 +440,75 @@ class SandboxApp : public App
         scene->add( shaderMesh );
     }
 
+    void buffer_geometry_particles_example()
+    {
+        camera = PerspectiveCamera::create( 27, aspectRatio(), 5.0f, 3500.0f );
+        camera->position().z() = 2750;
+
+        scene = Scene::create();
+        // scene.fog = new THREE.Fog( 0x050505, 2000, 3500 );
+
+        //
+
+        int particles = 500000;
+
+        BufferGeometryRef geometry = BufferGeometry::create();
+        geometry->attributes = {
+
+            { "position", newAttribute<'v3'>(particles) },
+            { "color", newAttribute<'c'>(particles) },
+
+        };
+
+
+        Vector3* positions = geometry->attribute("position")->dataPtr<Vector3>();
+        Color* colors = geometry->attribute("color")->dataPtr<Color>();
+
+        // var color = new THREE.Color();
+
+        int n = 1000, n2 = n / 2; // particles spread in the cube
+
+        for ( int i = 0; i < particles; ++i ) {
+
+            // positions
+            Vector3& pos = positions[i];
+
+            float x = pos.v.x = Math::random() * n - n2;
+            float y = pos.v.y = Math::random() * n - n2;
+            float z = pos.v.z = Math::random() * n - n2;
+
+            // colors
+
+            float vx = ( x / n ) + 0.5;
+            float vy = ( y / n ) + 0.5;
+            float vz = ( z / n ) + 0.5;
+
+            colors[i].setRGB( vx, vy, vz );
+
+        }
+
+        geometry->computeBoundingSphere();
+
+        //
+
+        auto pm = ParticleBasicMaterial::create();
+        pm->size() = 15.0f;
+        pm->vertexColors() = true;
+
+        particleSystem = ParticleSystem::create( geometry, pm );
+        scene->add( particleSystem );
+    }
+
     void setup()
     {
         renderer = GLES2Renderer::create();
         renderer->setSize(width(), height());
 
         // test1();
-        // buffer_geometry_example();
+        buffer_geometry_example();
         // buffer_geometry_lines_example();
-        shader_example();
+        // buffer_geometry_particles_example();
+        // shader_example();
     }
 
     void update()
@@ -460,6 +524,11 @@ class SandboxApp : public App
         if (line) {
             line->rotation().setX(time * 0.25);
             line->rotation().setY(time * 0.5);
+        }
+
+        if (particleSystem) {
+            particleSystem->rotation().setX(time * 0.25);
+            particleSystem->rotation().setY(time * 0.5);
         }
 
         if (material) {

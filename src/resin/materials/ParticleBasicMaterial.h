@@ -38,6 +38,11 @@ class ParticleBasicMaterial : public Material
 
   protected:
     ParticleBasicMaterial();
+
+    static const std::string kVertexShader;
+    static const std::string kFragmentShader;
+
+    static void initUniforms(UniformMap& um);
 };
 
 }

@@ -93,6 +93,7 @@ class Material
     Property<float> reflectivity;
     Property<float> refractionRatio;
     Property<int32_t> shading;
+    Property<bool> sizeAttenuation;
     Property<bool> skinning;
     Property<TextureRef> specularMap;
     Property<int32_t> vertexColors;

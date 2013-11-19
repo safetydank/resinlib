@@ -505,9 +505,9 @@ class SandboxApp : public App
         renderer->setSize(width(), height());
 
         // test1();
-        buffer_geometry_example();
+        // buffer_geometry_example();
         // buffer_geometry_lines_example();
-        // buffer_geometry_particles_example();
+        buffer_geometry_particles_example();
         // shader_example();
     }
 

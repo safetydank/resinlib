@@ -79,7 +79,7 @@ class GLES2Renderer
         CProperty<R, bool> useFog;
         CProperty<R, bool> fogExp;
 
-        // sizeAttenuation: material.sizeAttenuation,
+        CProperty<R, bool> sizeAttenuation;
 
         CProperty<R, bool> skinning;
         CProperty<R, int> maxBones;

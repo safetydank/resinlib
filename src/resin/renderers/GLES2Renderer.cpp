@@ -49,7 +49,7 @@ GLES2Renderer::Parameters::Parameters() :
     useFog(this, false),
     fogExp(this, false),
 
-    // sizeAttenuation: material.sizeAttenuation,
+    sizeAttenuation(this, true),
 
     skinning(this),
     maxBones(this),
@@ -1655,6 +1655,8 @@ void GLES2Renderer::initMaterial( MaterialRef material, vector<LightRef>& lights
         .useFog(material->fog())
         .fogExp(false)
 
+        .sizeAttenuation(material->sizeAttenuation())
+
         .skinning(material->skinning())
 
         .morphTargets(material->morphTargets())
@@ -1995,7 +1997,8 @@ ProgramRef GLES2Renderer::buildProgram ( const string& shaderID,
     // parameters.shadowMapDebug ? "#define SHADOWMAP_DEBUG" : "";
     // parameters.shadowMapCascade ? "#define SHADOWMAP_CASCADE" : "";
 
-    // parameters.sizeAttenuation ? "#define USE_SIZEATTENUATION" : "";
+    if (parameters.sizeAttenuation()) 
+        prefix_vertex << "#define USE_SIZEATTENUATION" << "\n";
 
     prefix_vertex << "uniform mat4 modelMatrix;" << "\n";
     prefix_vertex << "uniform mat4 modelViewMatrix;" << "\n";

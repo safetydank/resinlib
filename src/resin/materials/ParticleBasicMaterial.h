@@ -34,7 +34,7 @@ class ParticleBasicMaterial : public Material
     static ParticleBasicMaterialRef create();
 
     Property<float> size;
-    Property<bool> sizeAttenuation;
+    // Property<bool> sizeAttenuation;
 
   protected:
     ParticleBasicMaterial();

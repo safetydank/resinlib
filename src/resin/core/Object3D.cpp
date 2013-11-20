@@ -43,7 +43,7 @@ Object3D::Object3D(Object3D_t tag) : tag(tag)
 
     mRotationAutoUpdate = true;
 
-    mMatrix = mat4(1.0f);
+    matrix() = mat4(1.0f);
     mMatrixWorld = mat4(1.0f);
 
     mMatrixAutoUpdate = true;
@@ -143,17 +143,17 @@ bool Object3D::matrixAutoUpdate() const
     return mMatrixAutoUpdate;
 }
 
-void Object3D::applyMatrix(const Matrix4& matrix)
+void Object3D::applyMatrix(const Matrix4& mat)
 {
     Matrix4 m1;
 
-    mMatrix.multiplyMatrices( matrix, mMatrix );
+    matrix().multiplyMatrices( mat, matrix() );
 
-    mPosition.getPositionFromMatrix( mMatrix );
+    mPosition.getPositionFromMatrix( matrix() );
 
-    mScale.getScaleFromMatrix( mMatrix );
+    mScale.getScaleFromMatrix( matrix() );
 
-    m1.extractRotation( mMatrix );
+    m1.extractRotation( matrix() );
 
     mQuaternion.setFromRotationMatrix( m1 );
 }
@@ -405,7 +405,7 @@ void Object3D::remove( Object3DRef object )
 // 
 void Object3D::updateMatrix()
 {
-    mMatrix.compose( mPosition, mQuaternion, mScale );
+    matrix().compose( mPosition, mQuaternion, mScale );
     mMatrixWorldNeedsUpdate = true;
 }
 
@@ -416,10 +416,10 @@ void Object3D::updateMatrixWorld( bool force )
     if ( mMatrixWorldNeedsUpdate || force ) {
 
         if ( !mParent ) {
-            mMatrixWorld.copy( mMatrix );
+            mMatrixWorld.copy( matrix() );
         }
         else {
-            mMatrixWorld.multiplyMatrices( mParent->matrixWorld(), mMatrix );
+            mMatrixWorld.multiplyMatrices( mParent->matrixWorld(), matrix() );
         }
 
         mMatrixWorldNeedsUpdate = false;

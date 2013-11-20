@@ -25,6 +25,7 @@ enum Object3D_t {
     kBone,
     kParticleSystem,
     kScene,
+    kSprite,
     kMax = 100
 };
 
@@ -57,10 +58,11 @@ class Object3D : public std::enable_shared_from_this<Object3D>
     void setParent(Object3DRef object=Object3DRef());
     void setParent(Object3D* object=NULL);
 
+    Property<Matrix4> matrix;
     const Matrix4& matrixWorld() const;
     const std::vector<Object3DRef>& children() const;
 
-    void applyMatrix(const Matrix4& matrix);
+    void applyMatrix(const Matrix4& mat);
     void setRotationFromAxisAngle(const Vector3& axis, float angle);
     void setRotationFromEuler(const Euler& euler);
     void setRotationFromMatrix(const Matrix4& m);
@@ -79,7 +81,7 @@ class Object3D : public std::enable_shared_from_this<Object3D>
     void add( Object3DRef object );
     void remove( Object3DRef object );
 
-    void updateMatrix();
+    virtual void updateMatrix();
     void updateMatrixWorld( bool force=false );
 
   protected:

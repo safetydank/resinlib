@@ -42,6 +42,7 @@ set(SOURCES_CXX
     resin/materials/MeshPhongMaterial.cpp
     resin/materials/ParticleBasicMaterial.cpp
     resin/materials/ShaderMaterial.cpp
+    resin/materials/SpriteMaterial.cpp
     resin/math/Box3.cpp
     resin/math/Color.cpp
     resin/math/Euler.cpp
@@ -61,6 +62,7 @@ set(SOURCES_CXX
     resin/objects/Line.cpp
     resin/objects/Mesh.cpp
     resin/objects/ParticleSystem.cpp
+    resin/objects/Sprite.cpp
     resin/renderers/GLES2Renderer.cpp
     resin/renderers/Program.cpp
     resin/sandbox/Sandbox.cpp
@@ -111,6 +113,7 @@ set(HEADERS_CXX
     resin/math/Vector4.h
     resin/objects/Line.h
     resin/objects/Mesh.h
+    resin/objects/Sprite.h
     resin/renderers/GLES2Renderer.h
     resin/renderers/Program.h
     resin/scenes/Fog.h

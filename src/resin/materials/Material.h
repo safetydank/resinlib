@@ -24,7 +24,8 @@ enum Material_t {
     kMeshBasicMaterial,
     kMeshPhongMaterial,
     kMeshLambertMaterial,
-    kParticleBasicMaterial
+    kParticleBasicMaterial,
+    kSpriteMaterial
 };
 
 typedef std::map<std::string, std::string> DefineMap;

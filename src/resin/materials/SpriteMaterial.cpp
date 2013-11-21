@@ -3,6 +3,16 @@
 
 namespace RESIN {
 
+Vector2 SpriteAlignment::topLeft      = Vector2( 1, -1 );
+Vector2 SpriteAlignment::topCenter    = Vector2( 0, -1);
+Vector2 SpriteAlignment::topRight     = Vector2( -1, -1 );
+Vector2 SpriteAlignment::centerLeft   = Vector2( 1, 0 );
+Vector2 SpriteAlignment::center       = Vector2( 0, 0 );
+Vector2 SpriteAlignment::centerRight  = Vector2( -1, 0 );
+Vector2 SpriteAlignment::bottomLeft   = Vector2( 1, 1 );
+Vector2 SpriteAlignment::bottomCenter = Vector2( 0, 1 );
+Vector2 SpriteAlignment::bottomRight  = Vector2( -1, 1 );
+
 SpriteMaterialRef SpriteMaterial::create()
 {
     return SpriteMaterialRef( new SpriteMaterial() );
@@ -10,6 +20,29 @@ SpriteMaterialRef SpriteMaterial::create()
 
 SpriteMaterial::SpriteMaterial() : Material( kSpriteMaterial )
 {
+   	// defaults
+   
+   	color() = Color( 0xffffff );
+   	// map = new THREE.Texture();
+   
+   	useScreenCoordinates() = true;
+   	depthTest() = !useScreenCoordinates();
+   	sizeAttenuation() = !useScreenCoordinates();
+   	scaleByViewport() = !sizeAttenuation();
+   	alignment() = SpriteAlignment::center;
+   
+   	fog() = false;
+   
+   	uvOffset = Vector2( 0, 0 );
+   	uvScale  = Vector2( 1, 1 );
+   
+   	// override coupled defaults if not specified explicitly by parameters
+   
+   	// parameters = parameters || {};
+   
+   	// if ( parameters.depthTest === undefined ) depthTest = !useScreenCoordinates;
+   	// if ( parameters.sizeAttenuation === undefined ) sizeAttenuation = !useScreenCoordinates;
+   	// if ( parameters.scaleByViewport === undefined ) scaleByViewport = !sizeAttenuation;
 }
 
 // THREE.SpriteMaterial = function ( parameters ) {

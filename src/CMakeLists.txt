@@ -65,7 +65,7 @@ set(SOURCES_CXX
     resin/objects/Sprite.cpp
     resin/renderers/GLES2Renderer.cpp
     resin/renderers/Program.cpp
-    resin/sandbox/Sandbox.cpp
+#     resin/sandbox/Sandbox.cpp
     resin/scenes/Fog.cpp
     resin/scenes/Scene.cpp
     resin/textures/Texture.cpp
@@ -132,18 +132,21 @@ set(SOURCES_C
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 
-set_source_files_properties(${SOURCES_CXX} PROPERTIES COMPILE_FLAGS "-g -std=c++11 -stdlib=libc++ -Wno-shift-count-overflow -Wno-multichar -Wno-warn-absolute-paths")
-set_source_files_properties(${SOURCES_C} PROPERTIES COMPILE_FLAGS "-g -Wno-multichar -Wno-warn-absolute-paths")
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g -std=c++11 -stdlib=libc++ -Wno-shift-count-overflow -Wno-multichar -Wno-warn-absolute-paths" )
+set( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g -Wno-multichar -Wno-warn-absolute-paths" )
 
 if(APPLE)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
-    link_libraries(${EXTRA_LIBS})
-    add_executable(sandbox ${SOURCES_C} ${SOURCES_CXX} ${HEADERS_CXX})
+    add_library(resin ${SOURCES_C} ${SOURCES_CXX} ${HEADERS_CXX})
+    add_executable(sandbox resin/sandbox/Sandbox.cpp)
+    target_link_libraries(sandbox resin ${EXTRA_LIBS})
 endif(APPLE)
 
 if(EMSCRIPTEN)
     set(CMAKE_EXE_LINKER_FLAGS "-s TOTAL_MEMORY=67108864 ${CMAKE_EXE_LINKER_FLAGS}")
-    add_executable(sandbox.html ${SOURCES_C} ${SOURCES_CXX} ${HEADERS_CXX})
+    add_library(resin SHARED ${SOURCES_C} ${SOURCES_CXX} ${HEADERS_CXX})
+    add_executable(sandbox.html resin/sandbox/Sandbox.cpp)
+    target_link_libraries(sandbox.html resin)
 endif(EMSCRIPTEN)
 
 # Groups for Xcode/Visual Studio

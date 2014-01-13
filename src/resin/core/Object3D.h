@@ -84,6 +84,16 @@ class Object3D : public std::enable_shared_from_this<Object3D>
     virtual void updateMatrix();
     void updateMatrixWorld( bool force=false );
 
+    template <typename T>
+    void traverse(T& callback)
+    {
+        callback(*this);
+
+        for (Object3DRef child : children()) {
+            child->traverse(callback);
+        }
+    }
+
   protected:
     static int Object3DIdCount;
 
@@ -140,17 +150,6 @@ class Object3D : public std::enable_shared_from_this<Object3D>
     Property<BufferGeometryRef> geometry;
     Property<MaterialRef> material;
 };
-
-template <typename T>
-void traverse(Object3D& object, T& callback)
-{
-    callback(object);
-
-    for (Object3DRef child : object.children()) {
-        traverse(*child, callback);
-    }
-}
-
 
 }
 

@@ -10,7 +10,7 @@ and web via Emscripten/Native Client).
 
 ### Status ###
 
-_Unstable, pre-alpha, proof-of-concept - but actively worked on!_
+_Unstable, pre-alpha, proof-of-concept_
 
 * Based on three.js r61
 
